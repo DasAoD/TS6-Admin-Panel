@@ -351,6 +351,7 @@ function resolve_groups(string $sgids, array $groupMap): string {
             <label class="form-label">Nachricht</label>
             <input type="text" name="poke_msg" class="form-input"
                    placeholder="Deine Nachricht..." maxlength="100" autofocus>
+          <p style="color:var(--yellow);font-size:12px;margin-top:6px">⚠ Antworten auf Pokes sind aufgrund eines TS6-Beta-Bugs nicht möglich.</p>
           </div>
           <div class="modal-actions">
             <button type="submit" class="btn btn-primary">Senden</button>

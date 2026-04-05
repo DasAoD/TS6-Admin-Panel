@@ -355,6 +355,7 @@ $flash = flash_get();
         body = '<div class="form-group">' +
           '<label class="form-label">Nachricht</label>' +
           '<input type="text" id="ctx-input-msg" class="form-input" placeholder="Deine Nachricht…" maxlength="100">' +
+          '<p style="color:var(--yellow);font-size:12px;margin-top:6px">⚠ Antworten auf Pokes sind aufgrund eines TS6-Beta-Bugs nicht möglich.</p>' +
           '</div>';
       } else if (action === 'move') {
         var opts = channelCache.map(function(c) {
