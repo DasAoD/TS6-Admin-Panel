@@ -1,0 +1,15 @@
+# Sensitive Konfiguration
+config/config.php
+config/ts6ctl.conf
+config/.admin_pass
+config/ts3_users.json
+
+# Logs
+*.log
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~

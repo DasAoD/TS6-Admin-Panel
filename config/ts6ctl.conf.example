@@ -1,0 +1,11 @@
+# ts6ctl Konfiguration — Kopiere diese Datei nach ts6ctl.conf und passe sie an.
+TS6_INSTALL_DIR="/opt/teamspeak6"
+TS6_USER="teamspeak6"
+TS6_SERVICE="teamspeak6"
+TS6_VOICE_PORT="9987"
+TS6_FILETRANSFER_PORT="30033"
+TS6_QUERY_HTTP_PORT="10080"
+TS6_QUERY_API_KEY="DEIN_API_KEY"
+TS6_MAIL_TO="admin@example.com"
+TS6_MAIL_FROM="ts6ctl@example.com"
+TS6_INSTALLED_VERSION=""
