@@ -116,9 +116,6 @@ TS6-Admin-Panel/
 - Poke reply (TS6 beta bug)
 - TS6 generates new UIDs — no automatic TS3→TS6 avatar matching
 
-### License
-MIT — see [LICENSE](LICENSE)
-
 ---
 
 ## Deutsch
@@ -232,7 +229,24 @@ TS6-Admin-Panel/
 - Drag & Drop Channel-Reihenfolge (channelmove API fehlerhaft in beta8)
 - Poke-Reply (TS6-Beta-Bug)
 - TS6 generiert neue UIDs — keine automatische TS3→TS6 Avatar-Zuordnung
-```
 
-### Lizenz
-MIT — siehe [LICENSE](LICENSE)
+---
+
+## Mitwirkende / Contributors
+
+Dieses Projekt wurde in Zusammenarbeit mit [Claude](https://claude.ai) (Sonnet 4.6) von [Anthropic](https://anthropic.com) entwickelt.  
+Der überwiegende Teil des Codes, der Architektur und der Dokumentation wurde durch KI generiert und iterativ verfeinert.
+
+This project was developed in collaboration with [Claude](https://claude.ai) (Sonnet 4.6) by [Anthropic](https://anthropic.com).  
+The majority of the code, architecture, and documentation was AI-generated and iteratively refined.
+
+| Rolle / Role | Person / Tool |
+|---|---|
+| Projektidee & Anforderungen / Project idea & requirements | [DasAoD](https://github.com/DasAoD) |
+| Code, Architektur, Dokumentation / Code, architecture, documentation | Claude (Anthropic) |
+
+---
+
+## License
+
+[MIT](LICENSE)
