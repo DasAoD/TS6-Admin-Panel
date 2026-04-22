@@ -82,8 +82,13 @@ function ts6ctl_exec(string $cmd): array {
     }
     $output = [];
     $exit   = 0;
-    exec('sudo ' . TS6CTL_PATH . ' ' . escapeshellarg($cmd) . ' 2>&1', $output, $exit);
-    return ['exit' => $exit, 'output' => implode("\n", $output)];
+    // update wird nicht-interaktiv aufgerufen (kein stdin im WebUI-Kontext)
+    $args = ($cmd === 'update') ? escapeshellarg($cmd) . ' --yes' : escapeshellarg($cmd);
+    exec('sudo ' . TS6CTL_PATH . ' ' . $args . ' 2>&1', $output, $exit);
+    // ANSI-Farbcodes entfernen und curl-Fortschrittsbalken herausfiltern
+    $clean = array_map(fn($l) => preg_replace('/\x1b\[[0-9;]*m/', '', $l), $output);
+    $clean = array_values(array_filter($clean, fn($l) => !preg_match('/^[#=O\s\d\.%]*$/', trim($l))));
+    return ['exit' => $exit, 'output' => implode("\n", $clean)];
 }
 
 // ── Service-Steuerung ─────────────────────────────────────────
