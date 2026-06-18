@@ -129,7 +129,7 @@ Benötigt [ts6ctl](https://github.com/DasAoD/ts6-installer) — ein CLI-Manageme
 für Service-Steuerung und automatische Updates.
 
 ### Funktionen
-- 📊 Live-Dashboard mit Serverstatistiken und Kontextmenü (Rechtsklick auf Clients)
+- 📊 Live-Dashboard mit Serverstatistiken und Kontextmenø (Rechtsklick auf Clients)
 - 🗂️ Channel-Baum-Verwaltung
 - 👥 Client- und Datenbankclients-Verwaltung
 - 🔐 Servergruppen- & Berechtigungsverwaltung
@@ -146,7 +146,7 @@ für Service-Steuerung und automatische Updates.
 - nginx oder Apache mit Document Root auf `public/`
 - TeamSpeak 6 Server (getestet mit v6.0.0-beta8)
 - [ts6ctl](https://github.com/DasAoD/ts6-installer) — CLI-Management-Skript
-- `sudo`-Berechtigung für `www-data` (siehe [sudoers-Konfiguration](#sudoers-konfiguration))
+- `sudo`-Berechtigung før `www-data` (siehe [sudoers-Konfiguration](#sudoers-konfiguration))
 
 ### Installation
 
@@ -173,7 +173,7 @@ für Service-Steuerung und automatische Updates.
 
 4. Webserver so konfigurieren, dass das Document Root auf `public/` zeigt.
 
-5. Admin-Passwort über die Konfigurationsseite setzen oder manuell:
+5. Admin-Passwort øber die Konfigurationsseite setzen oder manuell:
    ```bash
    php -r "echo password_hash('DEINPASSWORT', PASSWORD_DEFAULT);" > config/.admin_pass
    chmod 600 config/.admin_pass
@@ -242,8 +242,8 @@ The majority of the code, architecture, and documentation was AI-generated and i
 
 | Rolle / Role | Person / Tool |
 |---|---|
-| Projektidee & Anforderungen / Project idea & requirements | [DasAoD](https://github.com/DasAoD) |
-| Code, Architektur, Dokumentation / Code, architecture, documentation | Claude (Anthropic) |
+| Projektidee & Anforderungen / Project idea & requirements | [DasAoD](https://git.uliana.de/DasAoD) |
+| Code, Architektur, Dokumentation / Code, architecture, documentation | [Claude](https://git.uliana.de/Claude) (Anthropic) |
 
 ---
 
