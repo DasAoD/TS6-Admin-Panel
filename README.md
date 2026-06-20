@@ -1,7 +1,7 @@
 # TS6 Admin Panel
 
-> **搌 Mirror-Hinweis:** Dieses Repository ist ein automatischer Spiegel.
-> Die primäre Entwicklung findet auf **[git.uliana.de/DasAoD/TS6-Admin-Panel](https://git.uliana.de/DasAoD/TS6-Admin-Panel)** statt.
+> **📌 Mirror-Hinweis:** Dieses Repository ist ein automatischer Spiegel.
+> Die primäre Entwicklung findet auf **[git.uliana.de/DasAoD/REPONAME](https://git.uliana.de/DasAoD/REPONAME)** statt.
 > Issues und Pull Requests bitte dort öffnen.
 
 **[English](#english) | [Deutsch](#deutsch)**
