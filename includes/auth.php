@@ -4,10 +4,10 @@
 // =============================================================
 
 function auth_start(): void {
-    ini_set('session.name', SESSION_NAME);
-    ini_set('session.cookie_lifetime', SESSION_LIFETIME);
-    ini_set('session.gc_maxlifetime', SESSION_LIFETIME);
     if (session_status() === PHP_SESSION_NONE) {
+        ini_set('session.name', SESSION_NAME);
+        ini_set('session.cookie_lifetime', SESSION_LIFETIME);
+        ini_set('session.gc_maxlifetime', SESSION_LIFETIME);
         session_start();
     }
 }

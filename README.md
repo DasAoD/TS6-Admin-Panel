@@ -31,6 +31,23 @@ Requires [ts6ctl](https://github.com/DasAoD/ts6-installer) - a CLI management sc
 - TeamSpeak 6 Server
 - [ts6ctl](https://github.com/DasAoD/ts6-installer)
 
+### sudoers
+The panel runs as `www-data` and needs exactly these commands, for example in `/etc/sudoers.d/ts6admin`:
+
+```
+www-data ALL=(ALL) NOPASSWD: /bin/systemctl start teamspeak6
+www-data ALL=(ALL) NOPASSWD: /bin/systemctl stop teamspeak6
+www-data ALL=(ALL) NOPASSWD: /bin/systemctl restart teamspeak6
+www-data ALL=(ALL) NOPASSWD: /bin/systemctl status teamspeak6
+www-data ALL=(ALL) NOPASSWD: /usr/local/bin/ts6ctl check-update
+www-data ALL=(ALL) NOPASSWD: /usr/local/bin/ts6ctl update
+www-data ALL=(ALL) NOPASSWD: /usr/local/bin/ts6ctl update --yes
+www-data ALL=(ALL) NOPASSWD: /usr/local/bin/ts6ctl status
+www-data ALL=(ALL) NOPASSWD: /usr/bin/journalctl -u teamspeak6 --no-pager -n 1000 --output=short
+```
+
+`ts6ctl update --yes` runs as root, so `/usr/local/bin/ts6ctl` and `config/ts6ctl.conf` must not be writable by `www-data`.
+
 ---
 
 ## Mitwirkende / Contributors

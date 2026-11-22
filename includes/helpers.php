@@ -99,7 +99,7 @@ function service_exec(string $action): array {
     }
     $output = [];
     $exit   = 0;
-    exec('sudo systemctl ' . $action . ' teamspeak6 2>&1', $output, $exit);
+    exec('sudo /bin/systemctl ' . $action . ' teamspeak6 2>&1', $output, $exit);
     return ['exit' => $exit, 'output' => implode("\n", $output)];
 }
 
