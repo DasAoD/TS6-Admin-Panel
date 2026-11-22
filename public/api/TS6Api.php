@@ -134,6 +134,10 @@ class TS6Api {
         return $this->request('clientdbinfo', ['cldbid' => $cldbid]);
     }
 
+    public function channelGroupList(): array {
+        return $this->request('channelgrouplist');
+    }
+
     // ── Server-Gruppen ────────────────────────────────────────
     public function serverGroupList(): array {
         return $this->request('servergrouplist');

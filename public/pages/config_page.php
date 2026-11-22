@@ -83,6 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'virtualserver_hostbutton_url'               => 's',
             'virtualserver_hostbutton_gfx_url'           => 's',
             'virtualserver_needed_identity_security_level' => 'i',
+            'virtualserver_complain_autoban_count' => 'i',
+            'virtualserver_complain_autoban_time' => 'i',
+            'virtualserver_log_channel' => 'i',
+            'virtualserver_log_client' => 'i',
+            'virtualserver_log_filetransfer' => 'i',
+            'virtualserver_log_query' => 'i',
+            'virtualserver_log_server' => 'i',
+            'virtualserver_weblist_enabled' => 'i',
+            'virtualserver_download_quota' => 'i',
+            'virtualserver_upload_quota' => 'i',
+            'virtualserver_default_server_group' => 'i',
+            'virtualserver_default_channel_group' => 'i',
         ];
         $cur    = api()->serverInfo()['data'][0] ?? [];
         $params = [];
@@ -244,6 +256,7 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
 
   <!-- TS6 Server-Einstellungen (serveredit) -->
   <?php $srv = $apiOnline ? (api()->serverInfo()['data'][0] ?? []) : []; ?>
+  <?php $sgList = $apiOnline ? (api()->serverGroupList()['data'] ?? []) : []; $cgList = $apiOnline ? (api()->channelGroupList()['data'] ?? []) : []; ?>
   <form method="post" action="/?page=config">
     <input type="hidden" name="section" value="ts6server">
     <div class="form-section">
@@ -324,6 +337,76 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
           <label class="form-label">Button-Grafik-URL</label>
           <input type="text" name="virtualserver_hostbutton_gfx_url" class="form-input" value="<?= e((string)($srv['virtualserver_hostbutton_gfx_url'] ?? '')) ?>" placeholder="">
         </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Standard-Servergruppe</label>
+            <select name="virtualserver_default_server_group" class="form-select">
+              <?php foreach ($sgList as $g): if ((int)($g['type'] ?? 1) !== 1) continue; ?>
+              <option value="<?= (int)$g['sgid'] ?>" <?= (string)($srv['virtualserver_default_server_group'] ?? '') === (string)$g['sgid'] ? 'selected' : '' ?>><?= e($g['name']) ?> (<?= (int)$g['sgid'] ?>)</option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Standard-Kanalgruppe</label>
+            <select name="virtualserver_default_channel_group" class="form-select">
+              <?php foreach ($cgList as $g): if ((int)($g['type'] ?? 1) !== 1) continue; ?>
+              <option value="<?= (int)$g['sgid'] ?>" <?= (string)($srv['virtualserver_default_channel_group'] ?? '') === (string)$g['sgid'] ? 'selected' : '' ?>><?= e($g['name']) ?> (<?= (int)$g['sgid'] ?>)</option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Autoban nach Beschwerden</label>
+            <input type="number" name="virtualserver_complain_autoban_count" min="0" class="form-input" value="<?= e((string)($srv['virtualserver_complain_autoban_count'] ?? '')) ?>">
+          <div class="form-hint">0 = aus</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Autoban-Dauer (s)</label>
+            <input type="number" name="virtualserver_complain_autoban_time" min="0" class="form-input" value="<?= e((string)($srv['virtualserver_complain_autoban_time'] ?? '')) ?>">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Download-Quota</label>
+            <input type="number" name="virtualserver_download_quota" min="0" class="form-input" value="<?= e((string)($srv['virtualserver_download_quota'] ?? '')) ?>">
+          <div class="form-hint">4294967295 = Maximalwert (unbegrenzt)</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Upload-Quota</label>
+            <input type="number" name="virtualserver_upload_quota" min="0" class="form-input" value="<?= e((string)($srv['virtualserver_upload_quota'] ?? '')) ?>">
+          <div class="form-hint">4294967295 = Maximalwert (unbegrenzt)</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Logging</label>
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-right:18px">
+            <input type="hidden" name="virtualserver_log_channel" value="0">
+            <input type="checkbox" name="virtualserver_log_channel" value="1" <?= ($srv['virtualserver_log_channel'] ?? '0') === '1' ? 'checked' : '' ?>> Channel
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-right:18px">
+            <input type="hidden" name="virtualserver_log_client" value="0">
+            <input type="checkbox" name="virtualserver_log_client" value="1" <?= ($srv['virtualserver_log_client'] ?? '0') === '1' ? 'checked' : '' ?>> Client
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-right:18px">
+            <input type="hidden" name="virtualserver_log_filetransfer" value="0">
+            <input type="checkbox" name="virtualserver_log_filetransfer" value="1" <?= ($srv['virtualserver_log_filetransfer'] ?? '0') === '1' ? 'checked' : '' ?>> Dateitransfer
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-right:18px">
+            <input type="hidden" name="virtualserver_log_query" value="0">
+            <input type="checkbox" name="virtualserver_log_query" value="1" <?= ($srv['virtualserver_log_query'] ?? '0') === '1' ? 'checked' : '' ?>> Query
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-right:18px">
+            <input type="hidden" name="virtualserver_log_server" value="0">
+            <input type="checkbox" name="virtualserver_log_server" value="1" <?= ($srv['virtualserver_log_server'] ?? '0') === '1' ? 'checked' : '' ?>> Server
+          </label>
+        </div>
+        <div class="form-group">
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-right:18px">
+            <input type="hidden" name="virtualserver_weblist_enabled" value="0">
+            <input type="checkbox" name="virtualserver_weblist_enabled" value="1" <?= ($srv['virtualserver_weblist_enabled'] ?? '0') === '1' ? 'checked' : '' ?>> In Weltliste eintragen
+          </label>
         </div>
       </div>
       <div class="form-section-footer">
