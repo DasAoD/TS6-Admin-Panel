@@ -181,6 +181,10 @@ class TS6Api {
         ], 'POST');
     }
 
+    public function serverGroupDelPerm(int $sgid, string $permSid): array {
+        return $this->request('servergroupdelperm', ['sgid' => $sgid, 'permsid' => $permSid], 'POST');
+    }
+
     // ── Bans ─────────────────────────────────────────────────
     public function banList(): array {
         return $this->request('banlist');

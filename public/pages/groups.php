@@ -34,6 +34,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: /?page=groups');
             exit;
 
+        case 'add_perm':
+            $permsid = trim($_POST['permsid'] ?? '');
+            if (!preg_match('/^[a-z]_[a-z0-9_]+$/', $permsid)) {
+                flash_set('danger', t('gen.error') . ': ungültiger Permission-Name.');
+                header('Location: /?page=groups&sgid=' . $sgid);
+                exit;
+            }
+            $result = api()->serverGroupAddPerm($sgid, $permsid, (int)($_POST['permvalue'] ?? 0),
+                !empty($_POST['permnegated']) ? 1 : 0, !empty($_POST['permskip']) ? 1 : 0);
+            flash_set($result['success'] ? 'success' : 'danger',
+                $result['success'] ? 'Recht gespeichert: ' . $permsid : t('gen.error') . ': ' . ($result['error'] ?? ''));
+            header('Location: /?page=groups&sgid=' . $sgid);
+            exit;
+
+        case 'del_perm':
+            $permsid = trim($_POST['permsid'] ?? '');
+            $result  = api()->serverGroupDelPerm($sgid, $permsid);
+            flash_set($result['success'] ? 'success' : 'danger',
+                $result['success'] ? 'Recht entfernt: ' . $permsid : t('gen.error') . ': ' . ($result['error'] ?? ''));
+            header('Location: /?page=groups&sgid=' . $sgid);
+            exit;
+
+        case 'set_icon':
+            // Icon-ID als vorzeichenlose oder vorzeichenbehaftete Zahl; TS erwartet int32
+            $iconId = (int)($_POST['icon_id'] ?? 0);
+            if ($iconId > 2147483647) $iconId -= 4294967296;
+            $result = api()->serverGroupAddPerm($sgid, 'i_icon_id', $iconId);
+            flash_set($result['success'] ? 'success' : 'danger',
+                $result['success'] ? 'Gruppen-Icon gesetzt.' : t('gen.error') . ': ' . ($result['error'] ?? ''));
+            header('Location: /?page=groups&sgid=' . $sgid);
+            exit;
+
         case 'add_client':
             $cldbid = (int)($_POST['cldbid'] ?? 0);
             $result = api()->serverGroupAddClient($sgid, $cldbid);
@@ -72,6 +104,9 @@ if ($selectedSgid && $apiOnline) {
     $groupMembers  = $membersResult['data'] ?? [];
     $permsResult   = api()->serverGroupPermList($selectedSgid);
     $groupPerms    = $permsResult['data'] ?? [];
+    $permNames     = array_column(api()->permissionList()['data'] ?? [], 'permname');
+    $iconPerm      = null;
+    foreach ($groupPerms as $gp) { if (($gp['permsid'] ?? '') === 'i_icon_id') { $iconPerm = (int)$gp['permvalue']; } }
 }
 
 // Typ-Label
@@ -279,10 +314,47 @@ $flash = flash_get();
         <?php endif; ?>
       </div>
 
+      <!-- Gruppen-Icon -->
+      <form method="post" action="/?page=groups" class="form-section">
+        <input type="hidden" name="action" value="set_icon">
+        <input type="hidden" name="sgid" value="<?= (int)$selectedSgid ?>">
+        <div class="form-section-head">Gruppen-Icon</div>
+        <div class="form-section-body">
+          <div class="form-group">
+            <label class="form-label">Icon-ID (Dateiname <code>icon_&lt;ID&gt;</code> im Icon-Ordner des Servers)</label>
+            <input type="number" name="icon_id" class="form-input"
+                   value="<?= $iconPerm !== null ? $iconPerm : '' ?>" placeholder="z. B. 1733969952">
+            <div class="form-hint">Aktuell: <?= $iconPerm !== null ? (int)$iconPerm : 'keins' ?> — negative und vorzeichenlose IDs sind beide möglich.</div>
+          </div>
+        </div>
+        <div class="form-section-footer"><button type="submit" class="btn btn-primary">Icon setzen</button></div>
+      </form>
+
       <!-- Berechtigungen -->
-      <?php if (!empty($groupPerms)): ?>
       <div class="form-section">
         <div class="form-section-head">Berechtigungen (<?= count($groupPerms) ?>)</div>
+        <form method="post" action="/?page=groups" class="form-section-body" id="perm-form">
+          <input type="hidden" name="action" value="add_perm">
+          <input type="hidden" name="sgid" value="<?= (int)$selectedSgid ?>">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Recht hinzufügen / ändern</label>
+              <input type="text" name="permsid" id="perm-sid" class="form-input" list="perm-names"
+                     placeholder="z. B. b_virtualserver_channel_list" autocomplete="off" required>
+              <datalist id="perm-names">
+                <?php foreach ($permNames as $pn): ?><option value="<?= e($pn) ?>"><?php endforeach; ?>
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Wert</label>
+              <input type="number" name="permvalue" id="perm-val" class="form-input" value="1" required>
+            </div>
+          </div>
+          <label style="margin-right:16px"><input type="checkbox" name="permnegated" id="perm-neg" value="1"> Negiert</label>
+          <label style="margin-right:16px"><input type="checkbox" name="permskip" id="perm-skip" value="1"> Skip</label>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+        <?php if (!empty($groupPerms)): ?>
         <div style="max-height:300px;overflow-y:auto">
           <table class="data">
             <thead>
@@ -291,22 +363,45 @@ $flash = flash_get();
                 <th style="text-align:right">Wert</th>
                 <th style="text-align:right">Negiert</th>
                 <th style="text-align:right">Skip</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($groupPerms as $p): ?>
+              <?php foreach ($groupPerms as $p): $ps = $p['permsid'] ?? ''; ?>
               <tr>
-                <td class="mono"><?= e($p['permsid'] ?? $p['permid'] ?? '—') ?></td>
+                <td class="mono"><?= e($ps ?: ($p['permid'] ?? '—')) ?></td>
                 <td style="text-align:right"><?= e($p['permvalue'] ?? '—') ?></td>
                 <td style="text-align:right"><?= ($p['permnegated'] ?? 0) ? '<span class="badge badge-red">ja</span>' : '—' ?></td>
                 <td style="text-align:right"><?= ($p['permskip'] ?? 0) ? '<span class="badge badge-yellow">ja</span>' : '—' ?></td>
+                <td style="text-align:right;white-space:nowrap">
+                  <?php if ($ps): ?>
+                  <button type="button" class="btn btn-ghost" title="Bearbeiten"
+                    onclick="permEdit(<?= e(json_encode([$ps, (int)($p['permvalue'] ?? 0), (int)($p['permnegated'] ?? 0), (int)($p['permskip'] ?? 0)])) ?>)">✎</button>
+                  <form method="post" action="/?page=groups" style="display:inline"
+                        onsubmit="return confirm('Recht <?= e($ps) ?> entfernen?')">
+                    <input type="hidden" name="action" value="del_perm">
+                    <input type="hidden" name="sgid" value="<?= (int)$selectedSgid ?>">
+                    <input type="hidden" name="permsid" value="<?= e($ps) ?>">
+                    <button type="submit" class="btn btn-ghost" title="Entfernen">✕</button>
+                  </form>
+                  <?php endif; ?>
+                </td>
               </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
         </div>
+        <?php endif; ?>
       </div>
-      <?php endif; ?>
+      <script>
+      function permEdit(a) {
+        document.getElementById('perm-sid').value = a[0];
+        document.getElementById('perm-val').value = a[1];
+        document.getElementById('perm-neg').checked = !!a[2];
+        document.getElementById('perm-skip').checked = !!a[3];
+        document.getElementById('perm-form').scrollIntoView({behavior:'smooth', block:'center'});
+      }
+      </script>
 
     </div>
 
