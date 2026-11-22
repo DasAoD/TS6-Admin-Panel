@@ -300,8 +300,13 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
           <input type="text" name="virtualserver_hostmessage" class="form-input" value="<?= e((string)($srv['virtualserver_hostmessage'] ?? '')) ?>" placeholder="">
         </div>
         <div class="form-group">
-          <label class="form-label">Host-Nachricht-Modus (0=keine, 1=Log, 2=Modal, 3=Modal+Disconnect)</label>
-          <input type="number" name="virtualserver_hostmessage_mode" class="form-input" value="<?= e((string)($srv['virtualserver_hostmessage_mode'] ?? '')) ?>" placeholder="">
+          <label class="form-label">Host-Nachricht-Modus</label>
+          <select name="virtualserver_hostmessage_mode" class="form-select">
+              <option value="0" <?= (string)($srv['virtualserver_hostmessage_mode'] ?? '') === '0' ? 'selected' : '' ?>>0 – keine</option>
+              <option value="1" <?= (string)($srv['virtualserver_hostmessage_mode'] ?? '') === '1' ? 'selected' : '' ?>>1 – im Log anzeigen</option>
+              <option value="2" <?= (string)($srv['virtualserver_hostmessage_mode'] ?? '') === '2' ? 'selected' : '' ?>>2 – als Dialog</option>
+              <option value="3" <?= (string)($srv['virtualserver_hostmessage_mode'] ?? '') === '3' ? 'selected' : '' ?>>3 – Dialog + Disconnect</option>
+          </select>
         </div>
         </div>
         <div class="form-row">
@@ -320,8 +325,12 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
           <input type="number" name="virtualserver_hostbanner_gfx_interval" class="form-input" value="<?= e((string)($srv['virtualserver_hostbanner_gfx_interval'] ?? '')) ?>" placeholder="">
         </div>
         <div class="form-group">
-          <label class="form-label">Banner-Modus (0/1/2)</label>
-          <input type="number" name="virtualserver_hostbanner_mode" class="form-input" value="<?= e((string)($srv['virtualserver_hostbanner_mode'] ?? '')) ?>" placeholder="">
+          <label class="form-label">Banner-Modus</label>
+          <select name="virtualserver_hostbanner_mode" class="form-select">
+              <option value="0" <?= (string)($srv['virtualserver_hostbanner_mode'] ?? '') === '0' ? 'selected' : '' ?>>0 – nicht anpassen</option>
+              <option value="1" <?= (string)($srv['virtualserver_hostbanner_mode'] ?? '') === '1' ? 'selected' : '' ?>>1 – anpassen, Seitenverhältnis ignorieren</option>
+              <option value="2" <?= (string)($srv['virtualserver_hostbanner_mode'] ?? '') === '2' ? 'selected' : '' ?>>2 – anpassen, Seitenverhältnis beibehalten</option>
+          </select>
         </div>
         </div>
         <div class="form-row">
