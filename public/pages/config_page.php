@@ -66,6 +66,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($section === 'ts6server') {
+        // ── Virtual-Server-Einstellungen (serveredit) ────────
+        $fields = [
+            'virtualserver_name'                         => 's',
+            'virtualserver_welcomemessage'               => 's',
+            'virtualserver_maxclients'                   => 'i',
+            'virtualserver_hostmessage'                  => 's',
+            'virtualserver_hostmessage_mode'             => 'i',
+            'virtualserver_hostbanner_url'               => 's',
+            'virtualserver_hostbanner_gfx_url'           => 's',
+            'virtualserver_hostbanner_gfx_interval'      => 'i',
+            'virtualserver_hostbanner_mode'              => 'i',
+            'virtualserver_hostbutton_tooltip'           => 's',
+            'virtualserver_hostbutton_url'               => 's',
+            'virtualserver_hostbutton_gfx_url'           => 's',
+            'virtualserver_needed_identity_security_level' => 'i',
+        ];
+        $cur    = api()->serverInfo()['data'][0] ?? [];
+        $params = [];
+        foreach ($fields as $key => $type) {
+            if (!isset($_POST[$key])) continue;
+            $val = $type === 'i' ? (string)(int)$_POST[$key] : str_replace("\r\n", "\n", (string)$_POST[$key]);
+            if ($val !== (string)($cur[$key] ?? '')) {
+                $params[$key] = $type === 'i' ? (int)$val : $val;
+            }
+        }
+        // Passwort: leer = unverändert, Checkbox = entfernen
+        if (!empty($_POST['virtualserver_password_clear'])) {
+            $params['virtualserver_password'] = '';
+        } elseif (($_POST['virtualserver_password'] ?? '') !== '') {
+            $params['virtualserver_password'] = (string)$_POST['virtualserver_password'];
+        }
+
+        if (!$params) {
+            flash_set('success', 'Keine Änderungen.');
+        } else {
+            $res = api()->serverEdit($params);
+            if ($res['success']) {
+                flash_set('success', 'Server-Einstellungen gespeichert (' . count($params) . ' geändert).');
+            } else {
+                flash_set('danger', 'Fehler: ' . ($res['error'] ?? 'unbekannt'));
+            }
+        }
+        header('Location: /?page=config');
+        exit;
+    }
+
     if ($section === 'apikey') {
         // ── API-Key in config.php setzen ─────────────────────
         $newKey  = trim($_POST['api_key'] ?? '');
@@ -186,6 +233,91 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
             Aktueller Key: <?= TS6_API_KEY ? '<span style="color:var(--green)">gesetzt</span>' : '<span style="color:var(--red)">nicht gesetzt</span>' ?>
             — Aus Journal: <code>journalctl -u teamspeak6 | grep apikey</code>
           </div>
+        </div>
+      </div>
+      <div class="form-section-footer">
+        <button type="submit" class="btn btn-primary"><?= t('cfg.save') ?></button>
+      </div>
+    </div>
+  </form>
+
+  <!-- TS6 Server-Einstellungen (serveredit) -->
+  <?php $srv = $apiOnline ? (api()->serverInfo()['data'][0] ?? []) : []; ?>
+  <form method="post" action="/?page=config">
+    <input type="hidden" name="section" value="ts6server">
+    <div class="form-section">
+      <div class="form-section-head">TS6 Server-Einstellungen</div>
+      <div class="form-section-body">
+        <?php if (!$srv): ?><div class="alert alert-danger">TS6-API nicht erreichbar.</div><?php endif; ?>
+        <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Servername</label>
+          <input type="text" name="virtualserver_name" class="form-input" value="<?= e((string)($srv['virtualserver_name'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Max. Clients</label>
+          <input type="number" name="virtualserver_maxclients" class="form-input" value="<?= e((string)($srv['virtualserver_maxclients'] ?? '')) ?>" placeholder="">
+        </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Willkommensnachricht</label>
+          <textarea name="virtualserver_welcomemessage" class="form-input" rows="4"><?= e((string)($srv['virtualserver_welcomemessage'] ?? '')) ?></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Server-Passwort</label>
+            <input type="password" name="virtualserver_password" class="form-input" placeholder="Leer lassen = unverändert" autocomplete="new-password">
+            <div class="form-hint">Aktuell: <?= ($srv['virtualserver_flag_password'] ?? '0') === '1' ? 'gesetzt' : 'kein Passwort' ?>
+              — <label><input type="checkbox" name="virtualserver_password_clear" value="1"> Passwort entfernen</label></div>
+          </div>
+        <div class="form-group">
+          <label class="form-label">Min. Identity-Security-Level</label>
+          <input type="number" name="virtualserver_needed_identity_security_level" class="form-input" value="<?= e((string)($srv['virtualserver_needed_identity_security_level'] ?? '')) ?>" placeholder="">
+        </div>
+        </div>
+        <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Host-Nachricht</label>
+          <input type="text" name="virtualserver_hostmessage" class="form-input" value="<?= e((string)($srv['virtualserver_hostmessage'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Host-Nachricht-Modus (0=keine, 1=Log, 2=Modal, 3=Modal+Disconnect)</label>
+          <input type="number" name="virtualserver_hostmessage_mode" class="form-input" value="<?= e((string)($srv['virtualserver_hostmessage_mode'] ?? '')) ?>" placeholder="">
+        </div>
+        </div>
+        <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Banner-URL (Link)</label>
+          <input type="text" name="virtualserver_hostbanner_url" class="form-input" value="<?= e((string)($srv['virtualserver_hostbanner_url'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Banner-Grafik-URL</label>
+          <input type="text" name="virtualserver_hostbanner_gfx_url" class="form-input" value="<?= e((string)($srv['virtualserver_hostbanner_gfx_url'] ?? '')) ?>" placeholder="">
+        </div>
+        </div>
+        <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Banner-Intervall (s)</label>
+          <input type="number" name="virtualserver_hostbanner_gfx_interval" class="form-input" value="<?= e((string)($srv['virtualserver_hostbanner_gfx_interval'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Banner-Modus (0/1/2)</label>
+          <input type="number" name="virtualserver_hostbanner_mode" class="form-input" value="<?= e((string)($srv['virtualserver_hostbanner_mode'] ?? '')) ?>" placeholder="">
+        </div>
+        </div>
+        <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Button-Tooltip</label>
+          <input type="text" name="virtualserver_hostbutton_tooltip" class="form-input" value="<?= e((string)($srv['virtualserver_hostbutton_tooltip'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Button-URL</label>
+          <input type="text" name="virtualserver_hostbutton_url" class="form-input" value="<?= e((string)($srv['virtualserver_hostbutton_url'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Button-Grafik-URL</label>
+          <input type="text" name="virtualserver_hostbutton_gfx_url" class="form-input" value="<?= e((string)($srv['virtualserver_hostbutton_gfx_url'] ?? '')) ?>" placeholder="">
+        </div>
         </div>
       </div>
       <div class="form-section-footer">
