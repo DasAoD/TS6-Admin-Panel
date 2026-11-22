@@ -21,10 +21,9 @@ $error    = '';
 
 switch ($source) {
     case 'server':
-        $cmd    = "journalctl -u " . escapeshellarg($conf['TS6_SERVICE'] ?? 'teamspeak6')
-                . " --no-pager -n " . (int)$lines . " --output=short 2>&1";
-        $output = shell_exec($cmd) ?? '';
-        $logLines = array_reverse(explode("\n", trim($output)));
+        // feste Parameter, damit die sudoers-Regel exakt greift; Zeilenzahl wird hier gekürzt
+        $output = shell_exec('sudo /usr/bin/journalctl -u teamspeak6 --no-pager -n 1000 --output=short 2>&1') ?? '';
+        $logLines = array_reverse(array_slice(explode("\n", trim($output)), -max(1, $lines)));
         break;
 
     case 'ts6ctl':
