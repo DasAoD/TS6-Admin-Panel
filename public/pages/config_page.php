@@ -351,7 +351,7 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
             <label class="form-label">Standard-Kanalgruppe</label>
             <select name="virtualserver_default_channel_group" class="form-select">
               <?php foreach ($cgList as $g): if ((int)($g['type'] ?? 1) !== 1) continue; ?>
-              <option value="<?= (int)$g['sgid'] ?>" <?= (string)($srv['virtualserver_default_channel_group'] ?? '') === (string)$g['sgid'] ? 'selected' : '' ?>><?= e($g['name']) ?> (<?= (int)$g['sgid'] ?>)</option>
+              <option value="<?= (int)$g['cgid'] ?>" <?= (string)($srv['virtualserver_default_channel_group'] ?? '') === (string)$g['cgid'] ? 'selected' : '' ?>><?= e($g['name']) ?> (<?= (int)$g['cgid'] ?>)</option>
               <?php endforeach; ?>
             </select>
           </div>
