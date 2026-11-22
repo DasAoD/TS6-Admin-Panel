@@ -460,7 +460,10 @@ table.data .actions { display: flex; gap: 6px; justify-content: flex-end; }
 .chan-spacer:hover .drag-handle { opacity: 1; }
 .drag-handle:active { cursor: grabbing; }
 .sortable-ghost { opacity: 0.4; background: var(--accent-dim) !important; }
-.chan-spacer { cursor: default; display: flex; align-items: center; gap: 6px; }
+.chan-spacer { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+a.chan-spacer { text-decoration: none; border-left: 3px solid transparent; }
+a.chan-spacer:hover { color: var(--text-muted); text-decoration: none; }
+.chan-spacer.active { background: var(--accent-dim); border-left-color: var(--accent); color: var(--text-primary); }
 .mono { font-family: var(--font-mono); }
 .text-muted { color: var(--text-muted); }
 .text-accent { color: var(--accent); }

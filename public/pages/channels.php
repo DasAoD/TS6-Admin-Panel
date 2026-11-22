@@ -146,9 +146,11 @@ function chan_display_name(string $name): string {
           if ($isSpacer):
             $displayName = chan_display_name($name);
       ?>
-        <div class="chan-spacer" data-cid="<?= $cid ?>" data-cpid="<?= $cpid ?>">
+        <a href="/?page=channels&cid=<?= $cid ?>"
+           class="chan-spacer <?= $isActive ? 'active' : '' ?>"
+           data-cid="<?= $cid ?>" data-cpid="<?= $cpid ?>">
           <?= e($displayName) ?>
-        </div>
+        </a>
       <?php else: ?>
         <a href="/?page=channels&cid=<?= $cid ?>"
            class="chan-item <?= $isActive ? 'active' : '' ?>"

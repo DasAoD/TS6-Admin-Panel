@@ -166,7 +166,8 @@ $commonPerms = [
           $isSpacer = is_spacer($name);
           $isActive = ($selectedCid === $cid);
           if ($isSpacer): ?>
-            <div class="chan-spacer"><?= e(preg_replace('/^\[[\*c]+spacer\d*\]/', '', $name)) ?></div>
+            <a href="/?page=permissions&target=channel&cid=<?= $cid ?>"
+               class="chan-spacer <?= $isActive ? 'active' : '' ?>"><?= e(preg_replace('/^\[[\*c]+spacer\d*\]/', '', $name)) ?></a>
           <?php else: ?>
             <a href="/?page=permissions&target=channel&cid=<?= $cid ?>"
                class="chan-item <?= $isActive ? 'active' : '' ?>">
