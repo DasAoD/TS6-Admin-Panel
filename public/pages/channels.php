@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($newName !== $origName && $newName !== '') {
                 $params['channel_name'] = $newName;
             }
-            if (isset($_POST['channel_password'])) {
+            if (!empty($_POST['channel_password'])) {
                 $params['channel_password'] = $_POST['channel_password'];
             }
             if (isset($_POST['channel_codec'])) {
