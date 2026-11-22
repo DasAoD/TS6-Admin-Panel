@@ -218,7 +218,7 @@ $commonPerms = [
       <div class="form-section">
         <div class="form-section-head">Berechtigung setzen</div>
         <div class="form-section-body">
-          <form method="post" action="/?page=permissions">
+          <form method="post" action="/?page=permissions" id="perm-form">
             <input type="hidden" name="action" value="add_perm">
             <input type="hidden" name="target" value="<?= e($target) ?>">
             <?= $hiddenTarget ?>
@@ -226,7 +226,7 @@ $commonPerms = [
             <div class="form-row">
               <div class="form-group" style="flex:2">
                 <label class="form-label">Permission-Name (permsid)</label>
-                <input type="text" name="permsid" class="form-input"
+                <input type="text" name="permsid" id="perm-sid" class="form-input"
                        placeholder="z.B. i_channel_join_power"
                        list="perm-suggestions" required autofocus>
                 <datalist id="perm-suggestions">
@@ -239,16 +239,16 @@ $commonPerms = [
               </div>
               <div class="form-group" style="flex:1">
                 <label class="form-label">Wert</label>
-                <input type="number" name="permvalue" class="form-input" value="1">
+                <input type="number" name="permvalue" id="perm-val" class="form-input" value="1">
               </div>
             </div>
             <?php if ($target === 'group'): ?>
             <div style="display:flex;gap:20px;margin-bottom:12px">
               <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-                <input type="checkbox" name="permnegated" value="1"> Negiert
+                <input type="checkbox" name="permnegated" id="perm-neg" value="1"> Negiert
               </label>
               <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-                <input type="checkbox" name="permskip" value="1"> Skip
+                <input type="checkbox" name="permskip" id="perm-skip" value="1"> Skip
               </label>
             </div>
             <?php endif; ?>
@@ -312,7 +312,11 @@ $commonPerms = [
                 <td style="text-align:center"><?= $neg  ? '<span class="badge badge-red">ja</span>'    : '—' ?></td>
                 <td style="text-align:center"><?= $skip ? '<span class="badge badge-yellow">ja</span>' : '—' ?></td>
                 <?php endif; ?>
-                <td>
+                <td style="white-space:nowrap">
+                  <button type="button" class="btn btn-ghost btn-sm"
+                          onclick="permEdit(<?= e(json_encode([(string)$permsid, (int)$value, $neg, $skip])) ?>)">
+                    Bearbeiten
+                  </button>
                   <form method="post" action="/?page=permissions" style="display:inline">
                     <input type="hidden" name="action" value="del_perm">
                     <input type="hidden" name="target" value="<?= e($target) ?>">
@@ -333,6 +337,17 @@ $commonPerms = [
       </div>
 
     </div>
+    <script>
+    function permEdit(a) {
+      document.getElementById('perm-sid').value = a[0];
+      document.getElementById('perm-val').value = a[1];
+      var n = document.getElementById('perm-neg'), k = document.getElementById('perm-skip');
+      if (n) n.checked = !!a[2];
+      if (k) k.checked = !!a[3];
+      document.getElementById('perm-form').scrollIntoView({behavior: 'smooth', block: 'center'});
+      document.getElementById('perm-val').focus();
+    }
+    </script>
     <?php endif; ?>
   </div>
 </div>
