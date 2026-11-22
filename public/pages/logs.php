@@ -63,7 +63,18 @@ if ($filter && !empty($logLines)) {
 $logLines = array_values($logLines);
 
 // Zeile colorieren
-function log_color(string $line): string {
+function log_color(string $line, string $source): string {
+    // nginx-Zeilen enthalten das Wort "error" auch in URLs, daher nach Status bzw. Level färben
+    if ($source === 'nginx') {
+        if (preg_match('/" 5\d\d /', $line)) return 'var(--red)';
+        if (preg_match('/" 4\d\d /', $line)) return 'var(--yellow)';
+        return 'var(--text-muted)';
+    }
+    if ($source === 'nginx_error') {
+        if (preg_match('/^\d{4}\/\d\d\/\d\d \d\d:\d\d:\d\d \[(emerg|alert|crit|error)\]/', $line)) return 'var(--red)';
+        if (preg_match('/^\d{4}\/\d\d\/\d\d \d\d:\d\d:\d\d \[warn\]/', $line)) return 'var(--yellow)';
+        return 'var(--text-muted)';
+    }
     if (preg_match('/ERROR|CRITICAL|error|fatal/i', $line)) return 'var(--red)';
     if (preg_match('/WARNING|WARN/i', $line))              return 'var(--yellow)';
     if (preg_match('/INFO|ok/i', $line))                   return 'var(--text-muted)';
@@ -144,7 +155,7 @@ $conf = ts6ctl_conf_read();
         <tbody>
           <?php foreach ($logLines as $i => $line):
             if (trim($line) === '') continue;
-            $color = log_color($line);
+            $color = log_color($line, $source);
           ?>
           <tr style="<?= $i % 2 === 0 ? 'background:var(--bg-base)' : '' ?>">
             <td style="padding:3px 14px;font-size:11px;font-family:var(--font-mono);
