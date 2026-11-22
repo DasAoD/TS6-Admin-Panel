@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'virtualserver_name'                         => 's',
             'virtualserver_welcomemessage'               => 's',
             'virtualserver_maxclients'                   => 'i',
+            'virtualserver_reserved_slots'               => 'i',
             'virtualserver_hostmessage'                  => 's',
             'virtualserver_hostmessage_mode'             => 'i',
             'virtualserver_hostbanner_url'               => 's',
@@ -257,6 +258,11 @@ $version  = $conf['TS6_INSTALLED_VERSION'] ?? '—';
         <div class="form-group">
           <label class="form-label">Max. Clients</label>
           <input type="number" name="virtualserver_maxclients" class="form-input" value="<?= e((string)($srv['virtualserver_maxclients'] ?? '')) ?>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reservierte Slots</label>
+          <input type="number" name="virtualserver_reserved_slots" min="0" class="form-input" value="<?= e((string)($srv['virtualserver_reserved_slots'] ?? '')) ?>" placeholder="">
+          <div class="form-hint">Für Admins freigehaltene Plätze, muss kleiner als Max. Clients sein.</div>
         </div>
         </div>
         <div class="form-group">
